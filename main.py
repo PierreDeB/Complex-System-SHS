@@ -41,8 +41,31 @@ def deplace_animaux() :
                 x= min (max (i+dx,0), n-1)
                 y= min (max (j+dy,0), m-1)
                 Grille_2[x][y].append(animal)
-    Grille = cp.deepcopy(Grille_2)
+    return Grille_2
+    
 
+def mange_animaux(chaine_alimentaire):
+    for i in range(n):
+        for j in range(m):
 
-Grille[0][0].append(Animal(Loup, 5, (0,0)))
-Grille=deplace_animaux()
+            
+            liste_animaux = Grille[i][j]
+            #On trie la liste d'animaux par espèce croissante
+            liste_animaux = liste_animaux.sort(key = lambda animal : -animal.espece)
+            chaine_alimentaire(liste_animaux)
+
+def chaine_alimentaire(liste_animaux) :
+    # L'animal n'a aucune capture, il cherche une proie
+    for animal in liste_animaux :
+        capture = None
+        for proie in liste_animaux :
+            if proie.espece == animal.espece -1 :
+                capture = proie
+                break
+        if proie != None:
+            animal.energie += 16
+            liste_animaux.remove(proie)
+
+    return
+        
+
