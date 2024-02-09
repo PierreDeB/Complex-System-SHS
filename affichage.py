@@ -1,8 +1,6 @@
 from tkinter import *
 import random as rd
 
-# definir current_grid
-
 ## Paramètres de la simulation
 
 n = 50 # nombre de lignes
@@ -10,8 +8,6 @@ m = 50 # nombre de colonnes
 taille_grille = 700
 couleur_grille = 'black'
 affiche_grille = False
-
-proba_herbe = 1/10
 
 couleur_animal = ['green', 'pink', 'black', 'orange']
 longueur_case = taille_grille/m
@@ -55,14 +51,6 @@ def remplir_case_rectangle(i, j, color = 'green'):
     x2, y2 = x1 + taille_grille/m, y1 + taille_grille/n
     affichage_grille.create_rectangle(x1, y1, x2, y2, width = 0, fill = color)
 
-def init():
-    for i in range(n):
-        for j in range(m):
-            p = rd.random()
-            if p <= proba_herbe:
-                remplir_case_rectangle(i, j, color = 'green')
-            else:
-                remplir_case_rectangle(i, j, color = 'orange')
     if affiche_grille:
         creation_grille()
 
@@ -131,8 +119,6 @@ def affichage(grille):
 
 ## Boutons
 
-reroll = Button(fenetre, text = "Reroll", command = init)
-reroll.pack(side = "left")
 
 show_grid = Button(fenetre, text = "Show/Hide grid", command = switch_grille)
 show_grid.pack(side = "left")
@@ -148,15 +134,3 @@ add_col.pack(side = "left")
 
 del_col = Button(fenetre, text = "Delete column", command = suppr_colonne)
 del_col.pack(side = "left")
-
-
-## Lancement de la simulation
-
-taille_grille = min(taille_grille, 1000)
-n = min(n, 500)
-m = min(m, 500)
-proba_herbe = max(0, min(proba_herbe, 1))
-
-#if n > 0 and m > 0 and taille_grille > 0 :
- #   init()
- #   fenetre.mainloop()
