@@ -63,6 +63,8 @@ def init():
                 remplir_case_rectangle(i, j, color = 'green')
             else:
                 remplir_case_rectangle(i, j, color = 'orange')
+    if affiche_grille:
+        creation_grille()
 
 def ajout_ligne():
     global n
@@ -70,36 +72,46 @@ def ajout_ligne():
     n += 1
     hauteur_case = taille_grille/n
     init()
+    if affiche_grille:
+        creation_grille()
 
 def suppr_ligne():
     global n
     global hauteur_case
+    global affiche_grille
     if n > 1:
         n -= 1
         hauteur_case = taille_grille/n
         init()
+    if affiche_grille:
+        creation_grille()
 
 def ajout_colonne():
     global m
     global longueur_case
+    global affiche_grille
     m += 1
     longueur_case = taille_grille/m
     init()
+    if affiche_grille:
+        creation_grille()
 
 def suppr_colonne():
     global m
     global longueur_case
+    global affiche_grille
     if m > 1:
         m -= 1
         longueur_case = taille_grille/m
         init()
+    if affiche_grille:
+        creation_grille()
 
 def switch_grille():
     global affiche_grille
     affiche_grille = not affiche_grille
     if affiche_grille:
         creation_grille()
-    else affichage(current_grid)
 
 
 def affichage(grille):
@@ -122,7 +134,7 @@ def affichage(grille):
 reroll = Button(fenetre, text = "Reroll", command = init)
 reroll.pack(side = "left")
 
-show_grid = Button(fenetre, text = "Show/Hide grid", command = creation_grille)
+show_grid = Button(fenetre, text = "Show/Hide grid", command = switch_grille)
 show_grid.pack(side = "left")
 
 add_row = Button(fenetre, text = "Add row", command = ajout_ligne)
@@ -140,11 +152,11 @@ del_col.pack(side = "left")
 
 ## Lancement de la simulation
 
-# taille_grille = min(taille_grille, 1000)
-# n = min(n, 500)
-# m = min(m, 500)
-# proba_herbe = max(0, min(proba_herbe, 1))
-#
-# if n > 0 and m > 0 and taille_grille > 0 :
-#     init()
-#     fenetre.mainloop()
+taille_grille = min(taille_grille, 1000)
+n = min(n, 500)
+m = min(m, 500)
+proba_herbe = max(0, min(proba_herbe, 1))
+
+#if n > 0 and m > 0 and taille_grille > 0 :
+ #   init()
+ #   fenetre.mainloop()
