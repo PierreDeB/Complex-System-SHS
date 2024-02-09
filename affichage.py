@@ -1,72 +1,150 @@
 from tkinter import *
 import random as rd
 
+# definir current_grid
+
 ## Paramètres de la simulation
 
-n = 5 # nombre de lignes
-m = 5 # nombre de colonnes
+n = 50 # nombre de lignes
+m = 50 # nombre de colonnes
 taille_grille = 700
-couleur_grille = 'green'
+couleur_grille = 'black'
+affiche_grille = False
 
-proba_herbe = 3/4 # juste pour faire des tests, je ne compte pas laisser
+proba_herbe = 1/10
 
-longueur_case = int(taille_grille/m)
-hauteur_case = int(taille_grille/n)
+couleur_animal = ['green', 'pink', 'black', 'orange']
+longueur_case = taille_grille/m
+hauteur_case = taille_grille/n
+
 
 ## Création de la fenêtre
 
 fenetre = Tk()
 fenetre.title("Simulation")
+fenetre.geometry(f"{taille_grille+200}x{taille_grille+60}")
 
-fenetre.geometry(str(taille_grille+200)+"x"+str(taille_grille+40))
 
 ## Création de l'interface graphique
 
-texte = Label(fenetre,text = "Simulation d'un système proie-prédateur (mais seulement avec de l'herbe)")
-texte.grid(row = 0, column = 0)
+taille_canvas = taille_grille + 10
+affichage_grille = Canvas(fenetre, width = taille_canvas, height = taille_canvas)
+affichage_grille.pack(side = "bottom")
 
-affichage_grille = Canvas(fenetre,width = taille_grille+10,height = taille_grille+10)
-affichage_grille.grid(row = 1, column = 0)
 
 ## Fonctions d'affichage
 
 def creation_grille():
-    for i in range(n+1):
-        pas = int(i*taille_grille/n)
-        affichage_grille.create_line(10,pas+10,taille_grille+10,pas+10,fill = couleur_grille,width = 1)
-    for j in range(m+1):
-        pas = int(j*taille_grille/m)
-        affichage_grille.create_line(pas+10,10,pas+10,taille_grille+10,fill = couleur_grille,width = 1)
+    for i in range(n + 1):
+        y = i * taille_grille/n + 10
+        affichage_grille.create_line(10, y, taille_canvas, y, fill = couleur_grille, width = 1)
+    for j in range(m + 1):
+        x = j * taille_grille/m + 10
+        affichage_grille.create_line(x, 10, x, taille_canvas, fill = couleur_grille, width = 1)
 
-def dessine_cercle(canv,x,y,rad,color = 'black'):
-    canv.create_oval(x-rad,y-rad,x+rad,y+rad,width = 0,fill = color)
+def dessine_cercle(canv, x, y, rad, color = 'black'):
+    canv.create_oval(x-rad, y-rad, x+rad, y+rad, width = 0, fill = color)
 
-def remplir_case(i,j,color = 'green',circle = True):
-    if circle:
-        rayon = min(longueur_case,hauteur_case)/2 - 10
-        x,y = (j+1/2)*taille_grille/m+10,(i+1/2)*taille_grille/n+10
-        dessine_cercle(affichage_grille,x,y,rayon,color)
-    else:
-        x1,y1 = (j*taille_grille/m)+10,(i*taille_grille/n)+10
-        x2,y2 = x1+(taille_grille/m),y1+(taille_grille/n)
-        affichage_grille.create_rectangle(x1,y1,x2,y2,width = 0,fill = color)
+def remplir_case_cercle(i, j, color = 'white'):
+    rayon = 0.45 * min(longueur_case, hauteur_case)
+    x, y = (j+1/2) * taille_grille/m + 10, (i+1/2) * taille_grille/n + 10
+    dessine_cercle(affichage_grille, x, y, rayon,color)
+
+def remplir_case_rectangle(i, j, color = 'green'):
+    x1, y1 = j * taille_grille/m + 10, i * taille_grille/n + 10
+    x2, y2 = x1 + taille_grille/m, y1 + taille_grille/n
+    affichage_grille.create_rectangle(x1, y1, x2, y2, width = 0, fill = color)
 
 def init():
     for i in range(n):
         for j in range(m):
             p = rd.random()
             if p <= proba_herbe:
-                remplir_case(i,j,color = 'green',circle = False)
+                remplir_case_rectangle(i, j, color = 'green')
             else:
-                remplir_case(i,j,color = 'brown',circle = False)
+                remplir_case_rectangle(i, j, color = 'orange')
+
+def ajout_ligne():
+    global n
+    global hauteur_case
+    n += 1
+    hauteur_case = taille_grille/n
+    init()
+
+def suppr_ligne():
+    global n
+    global hauteur_case
+    if n > 1:
+        n -= 1
+        hauteur_case = taille_grille/n
+        init()
+
+def ajout_colonne():
+    global m
+    global longueur_case
+    m += 1
+    longueur_case = taille_grille/m
+    init()
+
+def suppr_colonne():
+    global m
+    global longueur_case
+    if m > 1:
+        m -= 1
+        longueur_case = taille_grille/m
+        init()
+
+def switch_grille():
+    global affiche_grille
+    affiche_grille = not affiche_grille
+    if affiche_grille:
+        creation_grille()
+    else affichage(current_grid)
+
 
 def affichage(grille):
-    print("pas fini")
-    # Je pourrais compléter quand je saurais sous quelle forme se présentera la grille
+    k, l = len(grille), len(grille[0])
+    for i in range(k):
+        for j in range(l):
+            herbe, animal = grille[i][j]
+            if herbe:
+                remplir_case_rectangle(i, j, color = 'green')
+            else :
+                remplir_case_rectangle(i, j, color = 'orange')
+            if animal >= 0:
+                remplir_case_cercle(i, j, color = couleur_animal[animal])
+    if affiche_grille:
+        creation_grille()
+
+
+## Boutons
+
+reroll = Button(fenetre, text = "Reroll", command = init)
+reroll.pack(side = "left")
+
+show_grid = Button(fenetre, text = "Show/Hide grid", command = creation_grille)
+show_grid.pack(side = "left")
+
+add_row = Button(fenetre, text = "Add row", command = ajout_ligne)
+add_row.pack(side = "left")
+
+del_row = Button(fenetre, text = "Delete row", command = suppr_ligne)
+del_row.pack(side = "left")
+
+add_col = Button(fenetre, text = "Add column", command = ajout_colonne)
+add_col.pack(side = "left")
+
+del_col = Button(fenetre, text = "Delete column", command = suppr_colonne)
+del_col.pack(side = "left")
 
 
 ## Lancement de la simulation
 
-init()
-fenetre.mainloop()
-
+# taille_grille = min(taille_grille, 1000)
+# n = min(n, 500)
+# m = min(m, 500)
+# proba_herbe = max(0, min(proba_herbe, 1))
+#
+# if n > 0 and m > 0 and taille_grille > 0 :
+#     init()
+#     fenetre.mainloop()
